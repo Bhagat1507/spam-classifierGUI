@@ -1,8 +1,9 @@
+import pickle
+
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
-import pickle
 
 data = pd.read_csv("spam.csv", encoding='latin-1')
 # print(data.head(5))
@@ -27,19 +28,20 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=5)
 model = MultinomialNB()
 model.fit(x_train, y_train)
 
-result = model.score(x_test, y_test)
+result1 = model.score(x_test, y_test)
 # print(result*100)
 
 pickle.dump(model, open("spam.pkl", "wb"))
 pickle.dump(cv, open("vectorizer.pkl", "wb"))
 clf = pickle.load(open("spam.pkl", "rb"))
 
+
 # print(clf)
-msg = input("message: ")
-data = [msg]
-vect = cv.transform(data).toarray()
-result = model.predict(vect)
-if result == 0:
-    print(msg)
-else:
-    print("SPAM")
+def message(msg):
+    data = [msg]
+    vect = cv.transform(data).toarray()
+    result = model.predict(vect)
+    if result == 0:
+        return "SAFE: "+msg
+    else:
+        return "SPAM: "+msg
